@@ -1,13 +1,45 @@
 import { iconDropdown } from '../assets/images'
 import {DailyForecastCard, HourlyForecastCard, WeatherDetails, WeatherDetailsCard} from '../components/index'
 import HourlyForecastSection from './HourlyForecastSection'
+import { useWeatherContext } from "../context/WeatherContext"
+import { useWeather } from "../hooks/useWeather";
+
 
 const WeatherDetailsSection = () => {
+    const { selectedLocation } = useWeatherContext();
+    const { data, isLoading, isError } = useWeather(selectedLocation);
+
+     if (!selectedLocation) {
+        return (
+        <div className="flex justify-center items-center h-[50vh] text-white">
+            <p>Select a location to see the weather 🌤️</p>
+        </div>
+        );
+    }
+
+    if (isLoading) {
+        return (
+        <div className="flex justify-center items-center h-[50vh] text-white">
+            <p>Loading weather data...</p>
+        </div>
+        );
+    }
+
+    if (isError || !data) {
+        return (
+        <div className="flex justify-center items-center h-[50vh] text-white">
+            <p>Failed to load weather data 😔</p>
+        </div>
+        );
+    }
+
+    const { current } = data;  
+
     const weatherDetails =  [
-        {temp: 10},
-        {humidity: "46%"},
-        {wind: "14 km/h"},
-        {precipitation: "0 mm"}
+        {label: "Feels Like", value: `${Math.round(current.temperature)}°`},
+        {label: "Humidity", value: `${current.humidity}%`},
+        {label: "Wind", value: `${Math.round(current.wind)} km/h`},
+        {label: "Precipitation", value: `${current.precipitation} mm`}
     ]    
 
     const dailyForecastCard = [
@@ -31,6 +63,8 @@ const WeatherDetailsSection = () => {
                     weatherDetails.map((data, index) => (
                         <WeatherDetailsCard 
                             key={index}
+                            label={data.label}
+                            value={data.value}
                         /> 
                     ))
                 }            

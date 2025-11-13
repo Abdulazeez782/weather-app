@@ -1,6 +1,45 @@
 import { iconSunny, bgTodaySmall, bgTodayBig } from "../assets/images"
+import { useWeatherContext } from "../context/WeatherContext"
+import { useWeather } from "../hooks/useWeather";
 
 const WeatherDetails = () => {
+    const { selectedLocation } = useWeatherContext();
+    const { data, isLoading, isError } = useWeather(selectedLocation);
+
+    const today = new Date().toLocaleDateString("en-US", {
+        weekday: "long",
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+    });
+
+    if (!selectedLocation) {
+        return (
+        <div className="flex justify-center items-center h-[50vh] text-white">
+            <p>Select a location to see the weather 🌤️</p>
+        </div>
+        );
+    }
+
+    if (isLoading) {
+        return (
+        <div className="flex justify-center items-center h-[50vh] text-white">
+            <p>Loading weather data...</p>
+        </div>
+        );
+    }
+
+    if (isError || !data) {
+        return (
+        <div className="flex justify-center items-center h-[50vh] text-white">
+            <p>Failed to load weather data 😔</p>
+        </div>
+        );
+    }
+
+    console.log(selectedLocation);
+    const { current } = data;
+    
   return (
     <div
         className="relative w-full flex flex-col justify-center items-center gap-1 text-white h-[50vh]"
@@ -22,15 +61,15 @@ const WeatherDetails = () => {
 
         
         <div className="z-10">
-            <h1 className="text-xl text-dm-bold font-bold">Berlin, Germany</h1>
-            <p className="text-[10px]">Tuesday, Aug 5, 2025</p>
+            <h1 className="text-xl text-dm-bold font-bold">{selectedLocation.name}, {selectedLocation.country}</h1>
+            <p className="text-[10px]">{today}</p>
             <div className="flex justify-between gap-3 items-center">
                 <img 
                     src={iconSunny}
                     alt="icon-sunny"
                     width={100}
                 />
-                <h1 className="text-8xl">68</h1>
+                <h1 className="text-8xl">{Math.round(current.temperature)}°</h1>
             </div> 
         </div>
         
