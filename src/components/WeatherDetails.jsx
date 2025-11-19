@@ -1,6 +1,7 @@
 import { iconSunny, bgTodaySmall, bgTodayBig } from "../assets/images"
 import { useWeatherContext } from "../context/WeatherContext"
 import { useWeather } from "../hooks/useWeather";
+import { getWeatherIcon } from "../utils/weatherIcons";
 
 const WeatherDetails = () => {
     const { selectedLocation } = useWeatherContext();
@@ -65,7 +66,7 @@ const WeatherDetails = () => {
             <p className="text-[10px]">{today}</p>
             <div className="flex justify-between gap-3 items-center">
                 <img 
-                    src={iconSunny}
+                    src={getWeatherIcon(current.weathercode)}
                     alt="icon-sunny"
                     width={100}
                 />

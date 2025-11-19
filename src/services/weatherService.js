@@ -1,57 +1,46 @@
-import { fetchWeatherApi } from "openmeteo";
-
 export const fetchWeatherData = async (lat, lon) => {
-  const params = {
-    latitude: lat,
-    longitude: lon,
-    daily: ["temperature_2m_min", "temperature_2m_max", "rain_sum", "snowfall_sum", "precipitation_sum"],
-    hourly: ["temperature_2m", "relative_humidity_2m", "precipitation", "wind_speed_10m"],
-    current: ["temperature_2m", "precipitation", "showers", "snowfall", "wind_speed_10m", "relative_humidity_2m"],
-    timezone: "auto",
-  };
+  if (!lat || !lon) throw new Error("Invalid coordinates");
 
-  const url = "https://api.open-meteo.com/v1/forecast";
-  const responses = await fetchWeatherApi(url, params);
-  const data = responses[0];
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_min,temperature_2m_max,rain_sum,snowfall_sum,precipitation_sum,weathercode&hourly=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m&current_weather=true&timezone=auto`;
 
-  //hourly conditions 
-  const hourlyData = data.hourly();
+  const res = await fetch(url);
+  if (!res.ok) throw new Error("Failed to fetch weather");
 
-  // Parse hourly
-  const hourly = {
-    time: hourlyData.time(),
-    temperature: hourlyData.variables(0).valuesArray(),
-    humidity: hourlyData.variables(1).valuesArray(),
-    precipitation: hourlyData.variables(2).valuesArray(),
-    wind: hourlyData.variables(3).valuesArray(),
-  };
+  const json = await res.json();
 
-  //daily conditions
-  const dailyData = data.daily();
+  // Find the current hour index
+  const nowISO = json.current_weather?.time;
+  const currentHourIndex = json.hourly.time.findIndex(t => t === nowISO);
 
-  // Parse daily
-  const daily = {
-    time: dailyData.time(),
-    tempMin: dailyData.variables(0).valuesArray(),
-    tempMax: dailyData.variables(1).valuesArray(),
-    rain: dailyData.variables(2).valuesArray(),
-    snow: dailyData.variables(3).valuesArray(),
-    precipitation: dailyData.variables(4).valuesArray(),
-  };
-
-  // Current conditions
-  const currentData = data.current();
-
-  //parse current
+  // ---------------- CURRENT ----------------
   const current = {
-    time: currentData.time(),
-    temperature: currentData.variables(0).value(),
-    precipitation: currentData.variables(1).value(),
-    showers: currentData.variables(2).value(),
-    snowfall: currentData.variables(3).value(),
-    wind: currentData.variables(4).value(),
-    humidity: currentData.variables(5).value(),
-  }
+    time: json.current_weather?.time ?? "",
+    temperature: json.current_weather?.temperature ?? 0,
+    wind: json.current_weather?.windspeed ?? 0,
+    humidity: currentHourIndex >= 0 ? json.hourly.relative_humidity_2m[currentHourIndex] : null,
+    precipitation: currentHourIndex >= 0 ? json.hourly.precipitation[currentHourIndex] : null,
+    weathercode: json.current_weather?.weathercode ?? null,
+  };
 
-  return { current, hourly, daily };
+  // ---------------- DAILY ----------------
+  const daily = {
+    time: json.daily?.time ?? [],
+    tempMin: json.daily?.temperature_2m_min ?? [],
+    tempMax: json.daily?.temperature_2m_max ?? [],
+    rain: json.daily?.rain_sum ?? [],
+    snowfall: json.daily?.snowfall_sum ?? [],
+    precipitation: json.daily?.precipitation_sum ?? [],
+    weathercode: json.daily?.weathercode ?? [],
+  };
+
+  // ---------------- HOURLY ----------------
+  const hourly = {
+    time: json.hourly?.time ?? [],
+    temperature: json.hourly?.temperature_2m ?? [],
+    humidity: json.hourly?.relative_humidity_2m ?? [],
+    precipitation: json.hourly?.precipitation ?? [],
+    wind: json.hourly?.wind_speed_10m ?? [],
+  };
+
+  return { current, daily, hourly };
 };
