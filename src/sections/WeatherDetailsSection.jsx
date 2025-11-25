@@ -50,8 +50,8 @@ const WeatherDetailsSection = () => {
               <DailyForecastCard 
                 key={index} 
                 day={forecast.day} 
-                maxTemp={forecast.maxTemp} 
-                minTemp={forecast.minTemp} 
+                maxTemp={`${forecast.maxTemp}°`} 
+                minTemp={`${forecast.minTemp}°`} 
                 weatherIcon={forecast.weatherIcon}
             />
             ))}
