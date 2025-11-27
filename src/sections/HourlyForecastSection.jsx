@@ -4,6 +4,7 @@ import { HourlyForecastCard } from "../components"
 import { useWeatherContext } from "../context/WeatherContext"
 import { useWeather } from "../hooks/useWeather"
 import DayDropdown from "../components/DayDrpdown"
+import { getWeatherIcon } from "../utils/weatherIcons"
 
 
 const HourlyForecastSection = () => {
@@ -26,10 +27,12 @@ const HourlyForecastSection = () => {
 
         const times = hourly.time.slice(startIndex, startIndex + 9)
         const temps = hourly.temperature.slice(startIndex, startIndex + 9)
+        const weathercode = hourly.weathercode.slice(startIndex, startIndex + 9)
 
         return times.map((time, index) => ({
             time,
-            temperature: temps[index]
+            temperature: temps[index],
+            weatherIcon: getWeatherIcon(weathercode[index])
         }))
 
         
@@ -68,27 +71,6 @@ const HourlyForecastSection = () => {
     <section className='p-4 bg-neutral-700 w-full lg:w-[30%] rounded-md h-full'>
         <div className='flex justify-between gap-2 text-neutral-0 mb-3 rounded-md'>
             <h1>Hourly forecast</h1> 
-            {/* <select
-                className='flex gap-2 items-centertext-neutral-0 bg-neutral-800 px-2 py-1 focus:outline-none p-2 cursor-pointer'
-                value={selectedDay}
-                onChange={(e) => setSelectedDay(Number(e.target.value))}
-            >
-            <img
-                src={iconDropdown}
-                alt='dropdown icon'
-            />
-            {
-                dayOptions.map((day, index) => (
-                    <option 
-                        value={day.value}
-                        key={index}
-                        className="focus:outline-none p-2 cursor-pointer hover:bg-red-600"
-                    >
-                        {day.label}
-                    </option>
-                ))
-            }
-            </select> */}
             <DayDropdown 
                 value={selectedDay}
                 onChange={(val) => setSelectedDay(Number(val))}
@@ -102,6 +84,7 @@ const HourlyForecastSection = () => {
                     key={index}
                     time={formatHour(hour.time)}
                     temp={Math.round(hour.temperature)}
+                    weatherIcon={hour.weatherIcon}
                 />  
                 ))
             }    

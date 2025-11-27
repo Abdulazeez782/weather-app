@@ -1,7 +1,7 @@
 export const fetchWeatherData = async (lat, lon) => {
   if (!lat || !lon) throw new Error("Invalid coordinates");
 
-  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_min,temperature_2m_max,rain_sum,snowfall_sum,precipitation_sum,weathercode&hourly=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m&current_weather=true&timezone=auto`;
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_min,temperature_2m_max,rain_sum,snowfall_sum,precipitation_sum,weathercode&hourly=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m,weathercode&current_weather=true&timezone=auto`;
 
   const res = await fetch(url);
   if (!res.ok) throw new Error("Failed to fetch weather");
@@ -40,6 +40,7 @@ export const fetchWeatherData = async (lat, lon) => {
     humidity: json.hourly?.relative_humidity_2m ?? [],
     precipitation: json.hourly?.precipitation ?? [],
     wind: json.hourly?.wind_speed_10m ?? [],
+    weathercode: json.hourly?.weathercode ?? [],
   };
 
   return { current, daily, hourly };

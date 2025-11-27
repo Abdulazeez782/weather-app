@@ -1,11 +1,11 @@
-import { iconSunny, bgTodaySmall, bgTodayBig } from "../assets/images"
+import { bgTodaySmall, bgTodayBig } from "../assets/images"
 import { useWeatherContext } from "../context/WeatherContext"
 import { useWeather } from "../hooks/useWeather";
 import { getWeatherIcon } from "../utils/weatherIcons";
 
 const WeatherDetails = () => {
     const { selectedLocation } = useWeatherContext();
-    const { data, isLoading, isError } = useWeather(selectedLocation);
+    const { data, isLoading, isPending, isError } = useWeather(selectedLocation);
 
     const today = new Date().toLocaleDateString("en-US", {
         weekday: "long",
@@ -16,66 +16,67 @@ const WeatherDetails = () => {
 
     if (!selectedLocation) {
         return (
-        <div className="flex justify-center items-center h-[50vh] text-white">
-            <p>Select a location to see the weather 🌤️</p>
-        </div>
+            <div className="flex justify-center items-center h-[50vh] w-full text-white bg-[#1e213a] rounded-md">
+                <p>Select a location to see the weather 🌤️</p>
+            </div>
         );
     }
 
-    if (isLoading) {
+    if (isPending || isLoading) {
         return (
-        <div className="flex justify-center items-center h-[50vh] text-white">
-            <p>Loading weather data...</p>
-        </div>
+            <div className="relative w-full h-[50vh] flex flex-col justify-center items-center gap-4 text-white bg-[#1e213a] rounded-md">
+                {/* Three Dots Animation */}
+                <div className="flex space-x-2">
+                    <div className="w-3 h-3 bg-white rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+                    <div className="w-3 h-3 bg-white rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+                    <div className="w-3 h-3 bg-white rounded-full animate-bounce"></div>
+                </div>
+                <p className="text-gray-300 text-sm">Loading...</p>
+            </div>
         );
     }
 
     if (isError || !data) {
         return (
-        <div className="flex justify-center items-center h-[50vh] text-white">
-            <p>Failed to load weather data 😔</p>
-        </div>
+            <div className="flex justify-center items-center h-[50vh] w-full text-white bg-[#1e213a] rounded-md">
+                <p>Failed to load weather data</p>
+            </div>
         );
     }
 
-    console.log(selectedLocation);
     const { current } = data;
-    
-  return (
-    <div
-        className="relative w-full flex flex-col justify-center items-center gap-1 text-white h-[50vh]"
-    >
-        <div>
 
+    return (
+        <div className="relative w-full h-[50vh] flex flex-col justify-center items-center gap-1 text-white overflow-hidden rounded-md">
+            
+            <div
+                style={{ backgroundImage: `url(${bgTodaySmall})` }}
+                className="absolute inset-0 bg-no-repeat bg-cover bg-center sm:hidden z-0"
+            ></div>
+            <div
+                style={{ backgroundImage: `url(${bgTodayBig})` }}
+                className="absolute inset-0 bg-no-repeat bg-cover bg-center hidden sm:block z-0"
+            ></div>
+
+            <div className="relative z-10 flex flex-col items-center">
+                <h1 className="text-xl text-dm-bold font-bold drop-shadow-md">
+                    {selectedLocation.name}, {selectedLocation.country}
+                </h1>
+                <p className="text-[10px] mb-4 drop-shadow-md">{today}</p>
+                
+                <div className="flex justify-between gap-4 items-center">
+                    <img
+                        src={getWeatherIcon(current.weathercode)}
+                        alt="weather icon"
+                        className="w-20 h-20 object-contain drop-shadow-lg"
+                    />
+                    <h1 className="text-6xl sm:text-8xl font-medium drop-shadow-lg">
+                        {Math.round(current.temperature)}°
+                    </h1>
+                </div>
+            </div>
         </div>
-        {/* mobile backgound image */}
-        <div
-            style={{backgroundImage: `url(${bgTodaySmall})`}}
-            className="absolute inset-0 bg-no-repeat bg-cover bg-center sm:hidden"
-        ></div>
-
-        {/* desktop background image  */}
-        <div
-            className="absolute inset-0 bg-no-repeat bg-cover bg-center sm:block"
-            style={{backgroundImage: `url(${bgTodayBig})`}}
-        ></div>
-
-        
-        <div className="z-10">
-            <h1 className="text-xl text-dm-bold font-bold">{selectedLocation.name}, {selectedLocation.country}</h1>
-            <p className="text-[10px]">{today}</p>
-            <div className="flex justify-between gap-3 items-center">
-                <img 
-                    src={getWeatherIcon(current.weathercode)}
-                    alt="icon-sunny"
-                    width={100}
-                />
-                <h1 className="text-8xl">{Math.round(current.temperature)}°</h1>
-            </div> 
-        </div>
-        
-    </div>
-  )
+    )
 }
 
 export default WeatherDetails

@@ -56,14 +56,14 @@ const HeroSection = () => {
                     <input 
                         type='text'
                         placeholder='Search for a place...' 
-                        className='focus:ring-0 focus:outline-0 w-full'  
+                        className='focus:ring-0 focus:outline-0 w-full cursor-pointer'  
                         value={search}
                         onChange={handleInputChange}                 
                     />                                 
                 </div>  
                 {
                     showSuggestions && search && suggestions.length > 0 && (
-                    <ul className='absolute text-white bg-neutral-700 w-full top-full z-50 rounded-md shadow-2xl p-3 space-y-5 max-h-60 mt-2'>
+                    <ul className='absolute text-white bg-neutral-700 w-full top-full z-50 rounded-md shadow-2xl p-3 space-y-5 max-h-60 mt-2 cursor-pointer'>
                         {suggestions.map((loc, i) => (
                             <li
                                 key={i}
@@ -78,7 +78,7 @@ const HeroSection = () => {
             </div>
             
             <button
-                className='w-full lg:w-[20%] bg-blue-500 rounded-md text-white p-2'
+                className='w-full lg:w-[20%] bg-blue-500 rounded-md text-white p-2 cursor-pointer'
                 onClick={handleSearchClick}
             >
                 Search
