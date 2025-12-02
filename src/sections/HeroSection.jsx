@@ -2,51 +2,60 @@ import { useRef, useState } from 'react';
 import { iconSearch } from '../assets/images'
 import { useWeatherContext } from '../context/WeatherContext'
 import { useLocationSearch } from '../hooks/useLocationSearch';
+import { useWeather } from '../hooks/useWeather';
 
 const HeroSection = () => {
     const {search, setSearch, selectedLocation, setSelectedLocation} = useWeatherContext();
     const {data: suggestions = []} = useLocationSearch(search);
     const [showSuggestions, setShowSuggestions] = useState(false);
+    const { isLoading } = useWeather(selectedLocation);
     const selectedRef = useRef(null);
+    const [ error, setError ] = useState("");
 
     const handleSelectLocation = (loc) => {        
         setSearch(`${loc.name}`)      
         setShowSuggestions(false)
         selectedRef.current = loc;
+        setError("")
     }
 
     const handleInputChange = (e) => {
         setSearch(e.target.value)
         setShowSuggestions(true);
         selectedRef.current = null;
+        setError("")
     }
 
     const handleSearchClick = () => {
-       if(!selectedRef.current) {
-            alert("Please select a location before searching")
-            return;
+        let locationTarget = selectedRef.current;        
+        
+        // if users did not click an option and there are suggestions on the list automatically pick the first one
+       if(!locationTarget && suggestions.length> 0) {
+            locationTarget = suggestions[0];
        } 
+
+       if(!locationTarget) {
+            setError("Please select a valid location before searching")
+            return;
+       }
        
        //update global selected location
        setSelectedLocation({
-            name: selectedRef.current.name,
-            country: selectedRef.current.country,
-            latitude: selectedRef.current.latitude,
-            longitude: selectedRef.current.longitude
+            name: locationTarget.name,
+            country: locationTarget.country,
+            latitude: locationTarget.latitude,
+            longitude: locationTarget.longitude
        })
 
        setSearch("");
+       setError("");
     }
 
-    console.log(search);
-    console.log(suggestions);
-    
-
   return (
-    <section className='flex flex-col justify-center items-center gap-10'>
+    <section className='flex flex-col justify-center items-center gap-10 relative'>
         <h1 className='text-neutral-0 text-5xl text-center text-dm-bricolage-bold '>How's the sky looking today</h1>
 
-        <div className='flex flex-col lg:flex-row gap-3 w-full lg:w-[40%]'>
+        <div className='flex flex-col lg:flex-row gap-3 w-full lg:w-[45%]'>
             <div className='relative w-full'>
                 <div className='flex gap-4 items-center bg-neutral-800 text-neutral-0 p-2 rounded-md w-full'>
                     <img 
@@ -59,7 +68,7 @@ const HeroSection = () => {
                         className='focus:ring-0 focus:outline-0 w-full cursor-pointer'  
                         value={search}
                         onChange={handleInputChange}                 
-                    />                                 
+                    />                                           
                 </div>  
                 {
                     showSuggestions && search && suggestions.length > 0 && (
@@ -78,13 +87,15 @@ const HeroSection = () => {
             </div>
             
             <button
-                className='w-full lg:w-[20%] bg-blue-500 rounded-md text-white p-2 cursor-pointer'
+                className='w-full lg:max-w-[25%] bg-blue-500 rounded-md text-white p-2 cursor-pointer disabled:cursor-not-allowed hover:bg-blue-800 disabled:opacity-45'
                 onClick={handleSearchClick}
+                disabled={isLoading}                
             >
-                Search
-            </button>          
+                {isLoading ? "Searching..." : "Search"}
+            </button> 
+                      
         </div>
-        
+        {error && <p className='text-red-500 -mt-8 text-[12px]'>{error}</p>}  
     </section>
   )
 }

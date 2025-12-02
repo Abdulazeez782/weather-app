@@ -10,10 +10,15 @@ export const WeatherProvider = ({children}) => {
         latitude: 6.5244,
         longitude: 3.3792,
     });
+    const [units, setUnits] = useState({
+        temp: "c",
+        speed: "kmh",
+        precip: "mm"
+    })
 
     return (
         <WeatherContext.Provider
-            value={{search, setSearch, selectedLocation, setSelectedLocation}}
+            value={{search, setSearch, selectedLocation, setSelectedLocation, units, setUnits}}
         >
             {children}
         </WeatherContext.Provider>

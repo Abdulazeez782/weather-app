@@ -4,7 +4,7 @@ import { useWeather } from "../hooks/useWeather";
 import { getWeatherIcon } from "../utils/weatherIcons";
 
 const WeatherDetails = () => {
-    const { selectedLocation } = useWeatherContext();
+    const { selectedLocation, units } = useWeatherContext();
     const { data, isLoading, isPending, isError } = useWeather(selectedLocation);
 
     const today = new Date().toLocaleDateString("en-US", {
@@ -45,6 +45,8 @@ const WeatherDetails = () => {
     }
 
     const { current } = data;
+    const temperatureCelcius = Math.round(current.temperature);
+    const temperatureFarenheit = Math.round((temperatureCelcius * 9/5) + 32);
 
     return (
         <div className="relative w-full h-[50vh] flex flex-col justify-center items-center gap-1 text-white overflow-hidden rounded-md">
@@ -71,7 +73,7 @@ const WeatherDetails = () => {
                         className="w-20 h-20 object-contain drop-shadow-lg"
                     />
                     <h1 className="text-6xl sm:text-8xl font-medium drop-shadow-lg">
-                        {Math.round(current.temperature)}°
+                        { units.temp === "c" ? temperatureCelcius : temperatureFarenheit }°
                     </h1>
                 </div>
             </div>
