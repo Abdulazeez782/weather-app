@@ -6,9 +6,9 @@ import { useWeather } from '../hooks/useWeather';
 
 const HeroSection = () => {
     const {search, setSearch, selectedLocation, setSelectedLocation} = useWeatherContext();
-    const {data: suggestions = []} = useLocationSearch(search);
+    const {data: suggestions = [], isLoading: isSearchingLocation } = useLocationSearch(search);
     const [showSuggestions, setShowSuggestions] = useState(false);
-    const { isLoading } = useWeather(selectedLocation);
+    const { isLoading: isWeatherLoading } = useWeather(selectedLocation);
     const selectedRef = useRef(null);
     const [ error, setError ] = useState("");
 
@@ -70,17 +70,27 @@ const HeroSection = () => {
                         onChange={handleInputChange}                 
                     />                                           
                 </div>  
-                {
-                    showSuggestions && search && suggestions.length > 0 && (
+                {                    
+                    showSuggestions && search && (suggestions.length > 0 || isSearchingLocation) && (
                     <ul className='absolute text-white bg-neutral-700 w-full top-full z-50 rounded-md shadow-2xl p-3 space-y-5 max-h-60 mt-2 cursor-pointer'>
-                        {suggestions.map((loc, i) => (
-                            <li
-                                key={i}
-                                onClick={() => handleSelectLocation(loc)}
-                            >
-                                {loc.name}
-                            </li>
-                        ))}
+                        {
+                            isSearchingLocation ? (
+                                <li className='flex gap-2 items-center'>
+                                    <div className='w-3 h-3 border-3 border-white border-dotted rounded-full animate-spin'></div>
+                                    
+                                    <span className='text-[13px]'>Search in progress</span>
+                                </li>
+                            ) : (
+                                suggestions.map((loc, i) => (
+                                    <li
+                                        key={i}
+                                        onClick={() => handleSelectLocation(loc)}
+                                    >
+                                        {loc.name}
+                                    </li>
+                                ))
+                            )
+                        }
                     </ul>
                     )
                 }
@@ -89,9 +99,9 @@ const HeroSection = () => {
             <button
                 className='w-full lg:max-w-[25%] bg-blue-500 rounded-md text-white p-2 cursor-pointer disabled:cursor-not-allowed hover:bg-blue-800 disabled:opacity-45'
                 onClick={handleSearchClick}
-                disabled={isLoading}                
+                disabled={isWeatherLoading}                
             >
-                {isLoading ? "Searching..." : "Search"}
+                {isWeatherLoading ? "Searching..." : "Search"}
             </button> 
                       
         </div>
