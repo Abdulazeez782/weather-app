@@ -7,6 +7,6 @@ export const useWeather = (selectedLocation) => {
   return useQuery({
     queryKey: ["weather", selectedLocation?.latitude, selectedLocation?.longitude],
     queryFn: () => fetchWeatherData(selectedLocation.latitude, selectedLocation.longitude),
-    enabled, // ❗ only fetch when location is valid
-  });
+    enabled, // only fetch when location is valid
+  }); 
 };

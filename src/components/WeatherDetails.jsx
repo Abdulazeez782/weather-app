@@ -34,15 +34,7 @@ const WeatherDetails = () => {
                 <p className="text-gray-300 text-sm">Loading...</p>
             </div>
         );
-    }
-
-    if (isError || !data) {
-        return (
-            <div className="flex justify-center items-center h-[50vh] w-full text-white bg-[#1e213a] rounded-md">
-                <p>Failed to load weather data</p>
-            </div>
-        );
-    }
+    }    
 
     const { current } = data;
     const temperatureCelcius = Math.round(current.temperature);

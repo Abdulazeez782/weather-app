@@ -1,7 +1,3 @@
-# Frontend Mentor - Weather app solution
-
-This is a solution to the [Weather app challenge on Frontend Mentor](https://www.frontendmentor.io/challenges/weather-app-K1FhddVm49). Frontend Mentor challenges help you improve your coding skills by building realistic projects. 
-
 ## Table of contents
 
 - [Overview](#overview)
@@ -12,16 +8,12 @@ This is a solution to the [Weather app challenge on Frontend Mentor](https://www
   - [Built with](#built-with)
   - [What I learned](#what-i-learned)
   - [Continued development](#continued-development)
-  - [Useful resources](#useful-resources)
 - [Author](#author)
-- [Acknowledgments](#acknowledgments)
-
-**Note: Delete this note and update the table of contents based on what sections you keep.**
 
 ## Overview
+This weather app uses live api from open-meteo, displays current weather conditions and location details, additionally displays weather forecast for the next seven days alongside hourly forecast for the next seven hours. This application was developed with vite + react with tailwindcss for styling, tanstack query for interacting with the API and context Api for managing global state. 
 
 ### The challenge
-
 Users should be able to:
 
 - Search for weather information by entering a location in the search bar
@@ -39,81 +31,66 @@ Users should be able to:
 
 ![](./screenshot.jpg)
 
-Add a screenshot of your solution. The easiest way to do this is to use Firefox to view your project, right-click the page and select "Take a Screenshot". You can choose either a full-height screenshot or a cropped one based on how long the page is. If it's very long, it might be best to crop it.
-
-Alternatively, you can use a tool like [FireShot](https://getfireshot.com/) to take the screenshot. FireShot has a free option, so you don't need to purchase it. 
-
-Then crop/optimize/edit your image however you like, add it to your project, and update the file path in the image above.
-
-**Note: Delete this note and the paragraphs above when you add your screenshot. If you prefer not to add a screenshot, feel free to remove this entire section.**
 
 ### Links
 
-- Solution URL: [Add solution URL here](https://your-solution-url.com)
-- Live Site URL: [Add live site URL here](https://your-live-site-url.com)
+- [Live Site URL](https://weather-app-plum-eight-36.vercel.app/)
 
 ## My process
 
 ### Built with
 
-- Semantic HTML5 markup
-- CSS custom properties
-- Flexbox
-- CSS Grid
-- Mobile-first workflow
 - [React](https://reactjs.org/) - JS library
-- [Next.js](https://nextjs.org/) - React framework
-- [Styled Components](https://styled-components.com/) - For styles
+- [Vite](https://vite.dev/) - Build Tool
+- [TailwindCss](https://tailwindcss.com/) - For styles
+- [Tanstack Query](https://tanstack.com/query/latest) - Api state management
 
-**Note: These are just examples. Delete this note and replace the list above with your own choices**
 
 ### What I learned
+* Working on this project I learned how to work with tanstack query to fetch data from an api 
 
-Use this section to recap over some of your major learnings while working through this project. Writing these out and providing code samples of areas you want to highlight is a great way to reinforce your own knowledge.
-
-To see how you can add code snippets, see below:
-
+* I also learnt how to use the tailwind animations utilities to display loading states for better ux. A snippet from the code can be found below, here we are using **animate-pulse** other utilities that can be used for different functions includes; **animate-bounce**, **animate-ping** and **animate-spin**. 
 ```html
-<h1>Some HTML code I'm proud of</h1>
+<section className='p-4 bg-neutral-700 w-full lg:w-[30%] rounded-md h-full animate-pulse'>
+    <div className='flex justify-between gap-2 text-neutral-0 mb-3 rounded-md'>
+        <div className="h-6 w-32 bg-neutral-600 rounded">-</div>
+        <div className="h-8 w-24 bg-neutral-600 rounded"></div>
+    </div>
+    <div className='flex flex-col gap-3'>
+        {/* Render 5 skeleton cards */}
+        {[1, 2, 3, 4, 5].map((i) => (
+            <div key={i} className="h-16 w-full bg-neutral-600 rounded-md"></div>
+        ))}
+    </div>
+</section>
 ```
-```css
-.proud-of-this-css {
-  color: papayawhip;
-}
-```
-```js
-const proudOfThisFunc = () => {
-  console.log('🎉')
+
+* I used the function below to get specific weather icons for specific weather details, i abstracted the entire functionality and i used the array.include method to return the weather icons for each code provided by the weather api
+```Js
+export const getWeatherIcon = (code) => {
+    if (code === 0) return iconSunny;
+
+    if ([1,2,3].includes(code)) return iconPartlyCloudy;
+    if ([45,48].includes(code)) return iconFog;
+    if ([51,53,55].includes(code)) return iconDrizzle;
+    if ([61,63,65,66,67].includes(code)) return iconRain;   
+    if ([71, 73, 75, 77].includes(code)) return iconSnow;
+    if (code === 95) return iconStorm;
+
+    return iconPartlyCloudy;
 }
 ```
 
-If you want more help with writing markdown, we'd recommend checking out [The Markdown Guide](https://www.markdownguide.org/) to learn more.
+* I used the useRef hook in the hero section when a user is searching for a specific location to abstract the entire details of the location(latitude & longitude) to provide for the api and only display the city for the user to select.
 
-**Note: Delete this note and the content within this section and replace with your own learnings.**
 
 ### Continued development
 
-Use this section to outline areas that you want to continue focusing on in future projects. These could be concepts you're still not completely comfortable with or techniques you found useful that you want to refine and perfect.
-
-**Note: Delete this note and the content within this section and replace with your own plans for continued development.**
-
-### Useful resources
-
-- [Example resource 1](https://www.example.com) - This helped me for XYZ reason. I really liked this pattern and will use it going forward.
-- [Example resource 2](https://www.example.com) - This is an amazing article which helped me finally understand XYZ. I'd recommend it to anyone still learning this concept.
-
-**Note: Delete this note and replace the list above with resources that helped you during the challenge. These could come in handy for anyone viewing your solution or for yourself when you look back on this project in the future.**
+Moving forward, I would love to learn how to use tanstack query and fetch more comfortably. 
 
 ## Author
 
-- Website - [Add your name here](https://www.your-site.com)
-- Frontend Mentor - [@yourusername](https://www.frontendmentor.io/profile/yourusername)
-- Twitter - [@yourusername](https://www.twitter.com/yourusername)
+- Website - [Oludare Abdulazeez Ajadi](https://ajadii.vercel.app/)
+- Twitter - [@ajadii_](https://x.com/ajadii_)
 
-**Note: Delete this note and add/remove/edit lines above based on what links you'd like to share.**
 
-## Acknowledgments
-
-This is where you can give a hat tip to anyone who helped you out on this project. Perhaps you worked in a team or got some inspiration from someone else's solution. This is the perfect place to give them some credit.
-
-**Note: Delete this note and edit this section's content as necessary. If you completed this challenge by yourself, feel free to delete this section entirely.**

@@ -1,4 +1,3 @@
-import { useWeather } from './hooks/useWeather'
 import { HeaderSection, HeroSection, WeatherDetailsSection } from './sections/index'
 
 const App = () => {
@@ -15,8 +14,7 @@ const App = () => {
 
       <section>
         <WeatherDetailsSection />
-      </section>
-      
+      </section>      
     </main>
   )
 }

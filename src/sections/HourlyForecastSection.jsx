@@ -10,14 +10,12 @@ const HourlyForecastSection = () => {
     const { data, isLoading, error } = useWeather(selectedLocation);
     const [selectedDay, setSelectedDay] = useState(0);
 
-    // --- FIX: HANDLE LOADING STATE HERE ---
     // If we are loading or data is missing, return the Skeleton UI immediately.
-    // This prevents the code below from crashing.
     if (isLoading || !data) {
         return (
             <section className='p-4 bg-neutral-700 w-full lg:w-[30%] rounded-md h-full animate-pulse'>
                 <div className='flex justify-between gap-2 text-neutral-0 mb-3 rounded-md'>
-                    <div className="h-6 w-32 bg-neutral-600 rounded"></div>
+                    <div className="h-6 w-32 bg-neutral-600 rounded">-</div>
                     <div className="h-8 w-24 bg-neutral-600 rounded"></div>
                 </div>
                 <div className='flex flex-col gap-3'>
@@ -30,7 +28,7 @@ const HourlyForecastSection = () => {
         )
     }
 
-    // --- LOGIC (Only runs if data exists) ---
+    // Only runs if data exists
     const { hourly } = data;
     
     const getHoursForDisplay = () => {

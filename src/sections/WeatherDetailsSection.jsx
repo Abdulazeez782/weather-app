@@ -6,13 +6,11 @@ import { getWeatherIcon } from '../utils/weatherIcons'
 
 const WeatherDetailsSection = () => {
   const { selectedLocation, units } = useWeatherContext();
-  const { data, isLoading, isError } = useWeather(selectedLocation);
-
+  const { data, isLoading, isError, error } = useWeather(selectedLocation);
   
   if (!selectedLocation) return <p className="text-white text-center">Select a location</p>;
   
-  if (isError) return <p className="text-white text-center">Failed to load weather data</p>;
-
+  if (isError) return <p className="flex justify-center font-bold mt-4 h-screen w-full text-white bg-inherit rounded-md">{error.message}</p>;
   
   let weatherDetails = [];
   let combinedDailyForecast = [];
